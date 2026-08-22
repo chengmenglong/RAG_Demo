@@ -31,12 +31,12 @@
 |---|---|
 | 当前阶段 | `P01（READY）` |
 | 当前任务 | `NONE` |
-| 当前任务目标 | 等待执行 `P01-T01` |
+| 当前任务目标 | 等待执行 `P01-T02` |
 | 当前尝试次数 | `0` |
 | 最近更新时间 | `2026-08-22` |
-| 最近执行者 | 规划文档编制者 |
+| 最近执行者 | Codex |
 | 当前阻塞 | `NONE` |
-| NEXT_TASK / 下一候选任务 | `P01-T01` |
+| NEXT_TASK / 下一候选任务 | `P01-T02` |
 
 ## 4. 阶段状态
 
@@ -72,8 +72,8 @@
 | P00-T03 | P00 | 冻结架构与 ADR | `DONE` | P00-T02 | 1 | `02_ARCHITECTURE_AND_ADRS.md` 完成 | `NONE` | `NO_COMMIT（本轮仅交付规划文档）` |
 | P00-T04 | P00 | 冻结 API、数据与业务不变量 | `DONE` | P00-T02、P00-T03 | 1 | `03_API_DATA_CONTRACTS.md` 完成 | `NONE` | `NO_COMMIT（本轮仅交付规划文档）` |
 | P00-T05 | P00 | 建立 Luna 执行治理与验收门 | `DONE` | P00-T01、P00-T02、P00-T03、P00-T04 | 1 | 治理、验收、状态及 P00–P15 任务卡复核完成 | `D-0001–D-0004；失败 NONE` | `NO_COMMIT（本轮仅交付规划文档）` |
-| P01-T01 | P01 | 建立根目录工程卫生规则 | `READY` | P00-T05 | 0 | P00 Gate 已通过 | `NONE` | `NO_COMMIT（尚未执行）` |
-| P01-T02 | P01 | 创建 FastAPI 最小后端与 health 测试 | `NOT_STARTED` | P01-T01 | 0 | `PENDING` | `NONE` | `NO_COMMIT（尚未执行）` |
+| P01-T01 | P01 | 建立根目录工程卫生规则 | `DONE` | P00-T05 | 2 | 正向忽略检查退出 0；`.env.example` 负向检查退出 1；PowerShell CRLF 与 shell LF 属性检查通过；源码目录未被忽略；`git diff --check` 退出 0 | `F-0001（RESOLVED）` | `CHECKPOINT_PENDING` |
+| P01-T02 | P01 | 创建 FastAPI 最小后端与 health 测试 | `READY` | P01-T01 | 0 | P01-T01 已完成 | `NONE` | `NO_COMMIT（尚未执行）` |
 | P01-T03 | P01 | 创建 Vite/React/TypeScript 前端骨架 | `NOT_STARTED` | P01-T01 | 0 | `PENDING` | `NONE` | `NO_COMMIT（尚未执行）` |
 | P01-T04 | P01 | 实现前端应用壳与占位路由 | `NOT_STARTED` | P01-T03 | 0 | `PENDING` | `NONE` | `NO_COMMIT（尚未执行）` |
 | P01-T05 | P01 | 建立安全启停脚本并执行 P01 Smoke Gate | `NOT_STARTED` | P01-T02、P01-T04 | 0 | `PENDING` | `NONE` | `NO_COMMIT（尚未执行）` |
@@ -172,6 +172,9 @@
 | 时间 | 任务 | 命令或行为 | 退出码/结果 | 证据摘要 |
 |---|---|---|---|---|
 | 2026-08-22 | P00-T01–P00-T05 | 规划文档编制、基线复核、任务 heading 与状态表一致性检查 | PASS | P00 Gate 完成；本轮仅交付规划文档，未创建提交 |
+| 2026-08-22 | P01-T01 | `git check-ignore -v .env data/app.db frontend/node_modules backend/__pycache__/x.py`；`git check-ignore -v .env.example` | PASS | 正向样例退出 0；`.env.example` 负向样例退出 1；临时夹具已清理；首次误命中已由 F-0001 记录并解决 |
+| 2026-08-22 | P01-T01 | `git check-attr eol -- bootstrap.ps1 bootstrap.sh`；源码目录未忽略检查 | PASS | PowerShell 为 CRLF、shell 为 LF；`backend`、`frontend`、`demo_data`、`docs`、`scripts` 均未被忽略 |
+| 2026-08-22 | P01-T01 | `git diff --check` | PASS | 退出码 0；无 whitespace 错误 |
 
 ## 7. 更新检查清单
 

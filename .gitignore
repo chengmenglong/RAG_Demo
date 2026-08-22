@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.pytype/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+build/
+dist/
+pip-wheel-metadata/
+
+# Node.js
+node_modules/
+.npm/
+.pnpm-store/
+.yarn/
+.yarn-cache/
+frontend/.vite/
+frontend/.cache/
+frontend/.parcel-cache/
+frontend/.turbo/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local configuration and secrets
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
+.env.dev
+.env.prod
+
+# Runtime data and temporary files
+data/*
+!data/.gitkeep
+*.part
+*.tmp
+*.temp
+logs/
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
