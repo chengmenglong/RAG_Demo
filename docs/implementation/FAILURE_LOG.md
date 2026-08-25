@@ -118,11 +118,136 @@
 
 ## 6. 当前活动失败
 
-目前没有活动失败；`F-0001` 已按原最小复现验证解决。
+目前没有活动失败；`F-0001`、`F-0002`、`F-0003` 均已按原最小复现或回归验证解决。
 
 | 失败 ID | 任务 | 分类 | 首次出现 | 连续次数 | 状态 | 解除条件 |
 |---|---|---|---|---:|---|---|
 | F-0001 | P01-T01 | `IMPLEMENTATION` | 2026-08-22  | 1 | `RESOLVED` | 原最小复现与回归验证通过 |
+| F-0002 | P01-T02 | `ENVIRONMENT` | 2026-08-25 | 1 | `RESOLVED` | 原安装命令退出 0，pytest/ruff/mypy 回归通过 |
+| F-0003 | P01-T02 | `IMPLEMENTATION` | 2026-08-25 | 1 | `RESOLVED` | mypy 原命令退出 0，pytest/ruff 回归保持通过 |
+
+## F-0002：P01-T02 基线缺少后端与开发依赖
+
+- 状态：`RESOLVED`
+- 首次时间：2026-08-25
+- 最近时间：2026-08-25
+- 关联任务：P01-T02
+- 主分类：`ENVIRONMENT`
+- 连续同类失败次数：1
+- 总有效尝试次数：2
+- 关联决定：NONE
+
+### 最小复现
+
+```text
+C:\Users\chengmenglong\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe -m pytest backend/tests/test_health.py -q
+C:\Users\chengmenglong\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe -m ruff check backend
+```
+
+- 退出码或状态码：pytest 1；ruff 1
+- 预期结果：前置验证可运行
+- 实际结果：仓库尚无 `backend/`，当前 Python 环境未安装 pytest/ruff
+
+### 关键错误原文
+
+```text
+No module named pytest
+No module named ruff
+```
+
+### 影响范围
+
+- 阻断的完成门：P01-T02 自动验证
+- 是否可能损坏数据：否
+- 是否可能泄露敏感信息：否
+- 是否影响其他任务：否
+
+### 尝试 1
+
+- 根因假设：这是从空业务仓库开始执行 P01-T02 时的预期缺失前置条件，而非待实现 health 行为的失败。
+- 支持证据：backend 目录不存在，且 Python 3.12 运行时明确报告两个开发工具模块不存在。
+- 最小改动或诊断：按任务卡创建 pyproject、后端入口、health 测试并安装 `.[dev]` 依赖。
+- 重跑命令和退出码：待执行。
+- 结论：有进展。
+
+### 尝试 2
+
+- 与尝试 1 不同的假设：实现文件已就绪，当前阻断来自沙箱无法访问 Python 包索引，而非 pyproject 或 FastAPI 代码。
+- 支持证据：pip 在 build isolation 阶段连续报告 WinError 10051，并找不到 `setuptools<76,>=68`。
+- 最小改动或诊断：保留精确依赖声明，申请提升网络权限后重跑同一安装命令。
+- 重跑命令和退出码：`.venv\Scripts\python.exe -m pip install -e ".\backend[dev]"`；1。
+- 结论：有进展，等待提升网络权限。
+
+### 升级或解决
+
+- 当前结论：已解决。
+- 已排除原因：不是 API Key、外部服务或数据库问题。
+- 保留的工作树改动：仅 P01-T02 允许范围内文件及治理记录。
+- 解除阻塞所需的精确信息或条件：本地 Python 3.12 运行时可创建虚拟环境并安装公开依赖。
+- 建议下一步：保留安装结果并完成任务交接。
+- 解决后验证命令和退出码：安装命令 0；pytest 2 passed；ruff 0；mypy 0；pip check 0。
+- 对应提交：待任务完成后填写。
+
+## F-0003：请求 ID 中间件的可空类型推断
+
+- 状态：`RESOLVED`
+- 首次时间：2026-08-25
+- 最近时间：2026-08-25
+- 关联任务：P01-T02
+- 主分类：`IMPLEMENTATION`
+- 连续同类失败次数：1
+- 总有效尝试次数：2
+- 关联决定：NONE
+
+### 最小复现
+
+```text
+.venv\Scripts\python.exe -m mypy backend\app
+```
+
+- 退出码或状态码：1
+- 预期结果：类型检查通过
+- 实际结果：`backend\\app\\main.py:38: error: Incompatible types in assignment (expression has type "str | None", target has type "str")`
+
+### 关键错误原文
+
+```text
+backend\\app\\main.py:38: error: Incompatible types in assignment (expression has type "str | None", target has type "str")  [assignment]
+Found 1 error in 1 file (checked 6 source files)
+```
+
+### 影响范围
+
+- 阻断的完成门：类型质量复核
+- 是否可能损坏数据：否
+- 是否可能泄露敏感信息：否
+- 是否影响其他任务：否
+
+### 尝试 1
+
+- 根因假设：同一变量先接收 `str | None`，再在条件分支中被推断为 `str`，mypy 无法证明赋值安全。
+- 支持证据：错误定位到 `main.py:38` 的 assignment。
+- 最小改动或诊断：使用独立的可空输入变量和条件表达式生成最终字符串 request ID。
+- 重跑命令和退出码：待执行。
+- 结论：有进展。
+
+### 尝试 2
+
+- 与尝试 1 不同的假设：mypy 不会把自定义 `_is_valid_request_id` 谓词视为 `TypeGuard`，必须同时显式检查 `incoming_request_id is not None`。
+- 支持证据：修复后错误仍是同一赋值语义，但行号从 38 移至 41。
+- 最小改动或诊断：改用显式 `is not None` 与校验函数组合的分支赋值。
+- 重跑命令和退出码：待执行。
+- 结论：有进展。
+
+### 升级或解决
+
+- 当前结论：已解决。
+- 已排除原因：pytest 与 ruff 已通过；不是 FastAPI 运行时错误。
+- 保留的工作树改动：仅 P01-T02 允许范围内文件及治理记录。
+- 解除阻塞所需的精确信息或条件：无。
+- 建议下一步：保留类型修复并完成任务交接。
+- 解决后验证命令和退出码：mypy 0；pytest 2 passed；ruff 0。
+- 对应提交：待任务完成后填写。
 
 ## F-0001：`.env.example` 负向忽略检查误命中
 

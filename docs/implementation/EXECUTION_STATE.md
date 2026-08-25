@@ -31,12 +31,12 @@
 |---|---|
 | 当前阶段 | `P01（READY）` |
 | 当前任务 | `NONE` |
-| 当前任务目标 | 等待执行 `P01-T02` |
+| 当前任务目标 | 等待执行 `P01-T03` |
 | 当前尝试次数 | `0` |
-| 最近更新时间 | `2026-08-22` |
+| 最近更新时间 | `2026-08-25` |
 | 最近执行者 | Codex |
 | 当前阻塞 | `NONE` |
-| NEXT_TASK / 下一候选任务 | `P01-T02` |
+| NEXT_TASK / 下一候选任务 | `P01-T03` |
 
 ## 4. 阶段状态
 
@@ -73,8 +73,8 @@
 | P00-T04 | P00 | 冻结 API、数据与业务不变量 | `DONE` | P00-T02、P00-T03 | 1 | `03_API_DATA_CONTRACTS.md` 完成 | `NONE` | `NO_COMMIT（本轮仅交付规划文档）` |
 | P00-T05 | P00 | 建立 Luna 执行治理与验收门 | `DONE` | P00-T01、P00-T02、P00-T03、P00-T04 | 1 | 治理、验收、状态及 P00–P15 任务卡复核完成 | `D-0001–D-0004；失败 NONE` | `NO_COMMIT（本轮仅交付规划文档）` |
 | P01-T01 | P01 | 建立根目录工程卫生规则 | `DONE` | P00-T05 | 2 | 正向忽略检查退出 0；`.env.example` 负向检查退出 1；PowerShell CRLF 与 shell LF 属性检查通过；源码目录未被忽略；`git diff --check` 退出 0 | `F-0001（RESOLVED）` | `a9d9d22bb1ad8fc51c52a2f5339c4cd913736d6e` |
-| P01-T02 | P01 | 创建 FastAPI 最小后端与 health 测试 | `READY` | P01-T01 | 0 | P01-T01 已完成 | `NONE` | `NO_COMMIT（尚未执行）` |
-| P01-T03 | P01 | 创建 Vite/React/TypeScript 前端骨架 | `NOT_STARTED` | P01-T01 | 0 | `PENDING` | `NONE` | `NO_COMMIT（尚未执行）` |
+| P01-T02 | P01 | 创建 FastAPI 最小后端与 health 测试 | `DONE` | P01-T01 | 4 | 安装成功；pytest 2 passed、ruff/mypy/pip check 退出 0；lock 28 项一致；正常 health 200，未知路径 404，request ID 契约通过 | `F-0002（RESOLVED）、F-0003（RESOLVED）` | `CHECKPOINT_PENDING` |
+| P01-T03 | P01 | 创建 Vite/React/TypeScript 前端骨架 | `READY` | P01-T01 | 0 | P01-T01 已完成 | `NONE` | `NO_COMMIT（尚未执行）` |
 | P01-T04 | P01 | 实现前端应用壳与占位路由 | `NOT_STARTED` | P01-T03 | 0 | `PENDING` | `NONE` | `NO_COMMIT（尚未执行）` |
 | P01-T05 | P01 | 建立安全启停脚本并执行 P01 Smoke Gate | `NOT_STARTED` | P01-T02、P01-T04 | 0 | `PENDING` | `NONE` | `NO_COMMIT（尚未执行）` |
 | P02-T01 | P02 | 实现分层环境配置 | `NOT_STARTED` | P01-T05 | 0 | `PENDING` | `NONE` | `NO_COMMIT（尚未执行）` |
@@ -176,6 +176,14 @@
 | 2026-08-22 | P01-T01 | `git check-attr eol -- bootstrap.ps1 bootstrap.sh`；源码目录未忽略检查 | PASS | PowerShell 为 CRLF、shell 为 LF；`backend`、`frontend`、`demo_data`、`docs`、`scripts` 均未被忽略 |
 | 2026-08-22 | P01-T01 | `git diff --check` | PASS | 退出码 0；无 whitespace 错误 |
 | 2026-08-22 | P01-T01 | `git commit -m "chore(repo): establish root hygiene rules"`；`git rev-parse HEAD` | PASS | 本地 checkpoint 创建成功；SHA `a9d9d22bb1ad8fc51c52a2f5339c4cd913736d6e` |
+| 2026-08-25 | P01-T02 | `C:\Users\chengmenglong\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe -m pytest backend/tests/test_health.py -q`；`... -m ruff check backend` | FAIL（基线前置） | backend 尚不存在且开发依赖未安装；pytest/ruff 均报告 `No module named ...`，各退出 1；记录 F-0002 |
+| 2026-08-25 | P01-T02 | `.venv\Scripts\python.exe -m pip install -e ".\backend[dev]"` | FAIL（环境） | pip build isolation 无法连接包索引下载 setuptools，WinError 10051，退出 1；记录 F-0002 尝试 2 |
+| 2026-08-25 | P01-T02 | `.venv\Scripts\python.exe -m pytest backend/tests/test_health.py -q`；`... -m ruff check backend`；`... -m mypy backend\app` | FAIL（类型复核） | pytest 2 passed、ruff 通过；mypy 退出 1，指出 `main.py:38` 的可空字符串赋值；记录 F-0003 |
+| 2026-08-25 | P01-T02 | `.venv\Scripts\python.exe -m mypy backend\app`；pytest/ruff 回归 | FAIL（类型复核） | mypy 仍退出 1，错误移动至 `main.py:41`；pytest 2 passed、ruff 通过；采用显式 `is not None` 分支，记录 F-0003 尝试 2 |
+| 2026-08-25 | P01-T02 | `.venv\Scripts\python.exe -m pip install -e ".\backend[dev]"` | PASS | FastAPI、Uvicorn、pytest、httpx、ruff、mypy 安装成功，退出码 0 |
+| 2026-08-25 | P01-T02 | `pip freeze --exclude-editable` 与 `backend/requirements.lock` 比对；`pip check` | PASS | lock 28 项完全一致；无 broken requirements |
+| 2026-08-25 | P01-T02 | `python -m pytest backend/tests/test_health.py -q`；`python -m ruff check backend`；`python -m mypy backend\app` | PASS | pytest 2 passed；ruff 与 mypy 均退出 0 |
+| 2026-08-25 | P01-T02 | 独立 TestClient 正常/负向 HTTP 验证 | PASS | health 200、status/version 正确并回显合法 request ID；未知路径 404，非法 request ID 被替换 |
 
 ## 7. 更新检查清单
 
