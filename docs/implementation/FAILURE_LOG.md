@@ -186,7 +186,7 @@ No module named ruff
 - 解除阻塞所需的精确信息或条件：本地 Python 3.12 运行时可创建虚拟环境并安装公开依赖。
 - 建议下一步：保留安装结果并完成任务交接。
 - 解决后验证命令和退出码：安装命令 0；pytest 2 passed；ruff 0；mypy 0；pip check 0。
-- 对应提交：待任务完成后填写。
+- 对应提交：`3cdebe44f3c0b7f1a43ec34f3001638439589a0c`。
 
 ## F-0003：请求 ID 中间件的可空类型推断
 
@@ -247,7 +247,7 @@ Found 1 error in 1 file (checked 6 source files)
 - 解除阻塞所需的精确信息或条件：无。
 - 建议下一步：保留类型修复并完成任务交接。
 - 解决后验证命令和退出码：mypy 0；pytest 2 passed；ruff 0。
-- 对应提交：待任务完成后填写。
+- 对应提交：`3cdebe44f3c0b7f1a43ec34f3001638439589a0c`。
 
 ## F-0001：`.env.example` 负向忽略检查误命中
 

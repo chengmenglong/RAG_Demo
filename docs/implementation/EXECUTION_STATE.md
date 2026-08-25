@@ -73,7 +73,7 @@
 | P00-T04 | P00 | 冻结 API、数据与业务不变量 | `DONE` | P00-T02、P00-T03 | 1 | `03_API_DATA_CONTRACTS.md` 完成 | `NONE` | `NO_COMMIT（本轮仅交付规划文档）` |
 | P00-T05 | P00 | 建立 Luna 执行治理与验收门 | `DONE` | P00-T01、P00-T02、P00-T03、P00-T04 | 1 | 治理、验收、状态及 P00–P15 任务卡复核完成 | `D-0001–D-0004；失败 NONE` | `NO_COMMIT（本轮仅交付规划文档）` |
 | P01-T01 | P01 | 建立根目录工程卫生规则 | `DONE` | P00-T05 | 2 | 正向忽略检查退出 0；`.env.example` 负向检查退出 1；PowerShell CRLF 与 shell LF 属性检查通过；源码目录未被忽略；`git diff --check` 退出 0 | `F-0001（RESOLVED）` | `a9d9d22bb1ad8fc51c52a2f5339c4cd913736d6e` |
-| P01-T02 | P01 | 创建 FastAPI 最小后端与 health 测试 | `DONE` | P01-T01 | 4 | 安装成功；pytest 2 passed、ruff/mypy/pip check 退出 0；lock 28 项一致；正常 health 200，未知路径 404，request ID 契约通过 | `F-0002（RESOLVED）、F-0003（RESOLVED）` | `CHECKPOINT_PENDING` |
+| P01-T02 | P01 | 创建 FastAPI 最小后端与 health 测试 | `DONE` | P01-T01 | 4 | 安装成功；pytest 2 passed、ruff/mypy/pip check 退出 0；lock 28 项一致；正常 health 200，未知路径 404，request ID 契约通过 | `F-0002（RESOLVED）、F-0003（RESOLVED）` | `3cdebe44f3c0b7f1a43ec34f3001638439589a0c` |
 | P01-T03 | P01 | 创建 Vite/React/TypeScript 前端骨架 | `READY` | P01-T01 | 0 | P01-T01 已完成 | `NONE` | `NO_COMMIT（尚未执行）` |
 | P01-T04 | P01 | 实现前端应用壳与占位路由 | `NOT_STARTED` | P01-T03 | 0 | `PENDING` | `NONE` | `NO_COMMIT（尚未执行）` |
 | P01-T05 | P01 | 建立安全启停脚本并执行 P01 Smoke Gate | `NOT_STARTED` | P01-T02、P01-T04 | 0 | `PENDING` | `NONE` | `NO_COMMIT（尚未执行）` |
@@ -184,6 +184,7 @@
 | 2026-08-25 | P01-T02 | `pip freeze --exclude-editable` 与 `backend/requirements.lock` 比对；`pip check` | PASS | lock 28 项完全一致；无 broken requirements |
 | 2026-08-25 | P01-T02 | `python -m pytest backend/tests/test_health.py -q`；`python -m ruff check backend`；`python -m mypy backend\app` | PASS | pytest 2 passed；ruff 与 mypy 均退出 0 |
 | 2026-08-25 | P01-T02 | 独立 TestClient 正常/负向 HTTP 验证 | PASS | health 200、status/version 正确并回显合法 request ID；未知路径 404，非法 request ID 被替换 |
+| 2026-08-25 | P01-T02 | `git commit -m "feat(backend): add minimal FastAPI health endpoint"`；`git rev-parse HEAD` | PASS | 本地 checkpoint 创建成功；SHA `3cdebe44f3c0b7f1a43ec34f3001638439589a0c` |
 
 ## 7. 更新检查清单
 
